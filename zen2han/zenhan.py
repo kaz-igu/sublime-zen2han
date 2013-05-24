@@ -1,7 +1,7 @@
-# -*- coding: euc-jp -*-
+# -*- coding: utf-8 -*-
 
 from types import UnicodeType
-
+from xml.sax.saxutils import escape
 ASCII = 1
 DIGIT = 2
 KANA  = 4
@@ -16,38 +16,38 @@ class zenhanError(Exception):
         return repr(self.value)
 
 # list of ZENKAKU characters
-z_ascii = [u"£á", u"£â", u"£ã", u"£ä", u"£å", u"£æ", u"£ç", u"£è", u"£é",
-           u"£ê", u"£ë", u"£ì", u"£í", u"£î", u"£ï", u"£ð", u"£ñ", u"£ò",
-           u"£ó", u"£ô", u"£õ", u"£ö", u"£÷", u"£ø", u"£ù", u"£ú",
-           u"£Á", u"£Â", u"£Ã", u"£Ä", u"£Å", u"£Æ", u"£Ç", u"£È", u"£É",
-           u"£Ê", u"£Ë", u"£Ì", u"£Í", u"£Î", u"£Ï", u"£Ð", u"£Ñ", u"£Ò",
-           u"£Ó", u"£Ô", u"£Õ", u"£Ö", u"£×", u"£Ø", u"£Ù", u"£Ú",
-           u"¡ª", u"¡É", u"¡ô", u"¡ð", u"¡ó", u"¡õ", u"¡Ç", u"¡Ê", u"¡Ë",
-           u"¡ö", u"¡Ü", u"¡¤", u"¡Ý", u"¡¥", u"¡¿", u"¡§", u"¡¨", u"¡ã",
-           u"¡á", u"¡ä", u"¡©", u"¡÷", u"¡Î", u"¡ï", u"¡Ï", u"¡°", u"¡²",
-           u"¡Æ", u"¡Ð", u"¡Ã", u"¡Ñ", u"¡Á", u"¡¡"]
+z_ascii = [u"ａ", u"ｂ", u"ｃ", u"ｄ", u"ｅ", u"ｆ", u"ｇ", u"ｈ", u"ｉ",
+           u"ｊ", u"ｋ", u"ｌ", u"ｍ", u"ｎ", u"ｏ", u"ｐ", u"ｑ", u"ｒ",
+           u"ｓ", u"ｔ", u"ｕ", u"ｖ", u"ｗ", u"ｘ", u"ｙ", u"ｚ",
+           u"Ａ", u"Ｂ", u"Ｃ", u"Ｄ", u"Ｅ", u"Ｆ", u"Ｇ", u"Ｈ", u"Ｉ",
+           u"Ｊ", u"Ｋ", u"Ｌ", u"Ｍ", u"Ｎ", u"Ｏ", u"Ｐ", u"Ｑ", u"Ｒ",
+           u"Ｓ", u"Ｔ", u"Ｕ", u"Ｖ", u"Ｗ", u"Ｘ", u"Ｙ", u"Ｚ",
+           u"！", u"”", u"＃", u"＄", u"％", u"＆", u"’", u"（", u"）",
+           u"＊", u"＋", u"，", u"−", u"．", u"／", u"：", u"；", u"＜",
+           u"＝", u"＞", u"？", u"＠", u"［", u"￥", u"］", u"＾", u"＿",
+           u"‘", u"｛", u"｜", u"｝", u"〜", u"　"]
 
-z_digit = [u"£°", u"£±", u"£²", u"£³", u"£´",
-           u"£µ", u"£¶", u"£·", u"£¸", u"£¹"]
+z_digit = [u"０", u"１", u"２", u"３", u"４",
+           u"５", u"６", u"７", u"８", u"９"]
 
-z_kana = [u"¥¢", u"¥¤", u"¥¦", u"¥¨", u"¥ª",
-          u"¥«", u"¥­", u"¥¯", u"¥±", u"¥³",
-          u"¥µ", u"¥·", u"¥¹", u"¥»", u"¥½",
-          u"¥¿", u"¥Á", u"¥Ä", u"¥Æ", u"¥È",
-          u"¥Ê", u"¥Ë", u"¥Ì", u"¥Í", u"¥Î",
-          u"¥Ï", u"¥Ò", u"¥Õ", u"¥Ø", u"¥Û",
-          u"¥Þ", u"¥ß", u"¥à", u"¥á", u"¥â",
-          u"¥ä", u"¥æ", u"¥è",
-          u"¥é", u"¥ê", u"¥ë", u"¥ì", u"¥í",
-          u"¥ï", u"¥ò", u"¥ó",
-          u"¥¡", u"¥£", u"¥¥", u"¥§", u"¥©",
-          u"¥Ã", u"¥ã", u"¥å", u"¥ç", u"¥ô",
-          u"¥¬", u"¥®", u"¥°", u"¥²", u"¥´",
-          u"¥¶", u"¥¸", u"¥º", u"¥¼", u"¥¾",
-          u"¥À", u"¥Â", u"¥Å", u"¥Ç", u"¥É",
-          u"¥Ð", u"¥Ó", u"¥Ö", u"¥Ù", u"¥Ü",
-          u"¥Ñ", u"¥Ô", u"¥×", u"¥Ú", u"¥Ý",
-          u"¡£", u"¡¢", u"¡¦", u"¡«", u"¡¬", u"¡Ö", u"¡×", u"¡¼"]
+z_kana = [u"ア", u"イ", u"ウ", u"エ", u"オ",
+          u"カ", u"キ", u"ク", u"ケ", u"コ",
+          u"サ", u"シ", u"ス", u"セ", u"ソ",
+          u"タ", u"チ", u"ツ", u"テ", u"ト",
+          u"ナ", u"ニ", u"ヌ", u"ネ", u"ノ",
+          u"ハ", u"ヒ", u"フ", u"ヘ", u"ホ",
+          u"マ", u"ミ", u"ム", u"メ", u"モ",
+          u"ヤ", u"ユ", u"ヨ",
+          u"ラ", u"リ", u"ル", u"レ", u"ロ",
+          u"ワ", u"ヲ", u"ン",
+          u"ァ", u"ィ", u"ゥ", u"ェ", u"ォ",
+          u"ッ", u"ャ", u"ュ", u"ョ", u"ヴ",
+          u"ガ", u"ギ", u"グ", u"ゲ", u"ゴ",
+          u"ザ", u"ジ", u"ズ", u"ゼ", u"ゾ",
+          u"ダ", u"ヂ", u"ヅ", u"デ", u"ド",
+          u"バ", u"ビ", u"ブ", u"ベ", u"ボ",
+          u"パ", u"ピ", u"プ", u"ペ", u"ポ",
+          u"。", u"、", u"・", u"゛", u"゜", u"「", u"」", u"ー", u"！", u"？"]
 
 # list of HANKAKU characters
 h_ascii = [u"a", u"b", u"c", u"d", u"e", u"f", u"g", u"h", u"i",
@@ -61,36 +61,42 @@ h_ascii = [u"a", u"b", u"c", u"d", u"e", u"f", u"g", u"h", u"i",
            u"=", u">", u"?", u"@", u"[", u"\\", u"]", u"^", u"_",
            u"`", u"{", u"|", u"}", u"~", u" "]
 
+he_ascii = [escape(i) for i in h_ascii]
+
 h_digit = [u"0", u"1", u"2", u"3", u"4", u"5", u"6", u"7", u"8", u"9"]
 
-h_kana = [u"Ž±", u"Ž²", u"Ž³", u"Ž´", u"Žµ",
-          u"Ž¶", u"Ž·", u"Ž¸", u"Ž¹", u"Žº",
-          u"Ž»", u"Ž¼", u"Ž½", u"Ž¾", u"Ž¿",
-          u"ŽÀ", u"ŽÁ", u"ŽÂ", u"ŽÃ", u"ŽÄ",
-          u"ŽÅ", u"ŽÆ", u"ŽÇ", u"ŽÈ", u"ŽÉ",
-          u"ŽÊ", u"ŽË", u"ŽÌ", u"ŽÍ", u"ŽÎ",
-          u"ŽÏ", u"ŽÐ", u"ŽÑ", u"ŽÒ", u"ŽÓ",
-          u"ŽÔ", u"ŽÕ", u"ŽÖ",
-          u"Ž×", u"ŽØ", u"ŽÙ", u"ŽÚ", u"ŽÛ",
-          u"ŽÜ", u"Ž¦", u"ŽÝ",
-          u"Ž§", u"Ž¨", u"Ž©", u"Žª", u"Ž«",
-          u"Ž¯", u"Ž¬", u"Ž­", u"Ž®", u"Ž³ŽÞ",
-          u"Ž¶ŽÞ", u"Ž·ŽÞ", u"Ž¸ŽÞ", u"Ž¹ŽÞ", u"ŽºŽÞ",
-          u"Ž»ŽÞ", u"Ž¼ŽÞ", u"Ž½ŽÞ", u"Ž¾ŽÞ", u"Ž¿ŽÞ",
-          u"ŽÀŽÞ", u"ŽÁŽÞ", u"ŽÂŽÞ", u"ŽÃŽÞ", u"ŽÄŽÞ",
-          u"ŽÊŽÞ", u"ŽËŽÞ", u"ŽÌŽÞ", u"ŽÍŽÞ", u"ŽÎŽÞ",
-          u"ŽÊŽß", u"ŽËŽß", u"ŽÌŽß", u"ŽÍŽß", u"ŽÎŽß",
-          u"Ž¡", u"Ž¤", u"Ž¥", u"ŽÞ", u"Žß", u"Ž¢", u"Ž£", u"Ž°"]
+h_kana = [u"ｱ", u"ｲ", u"ｳ", u"ｴ", u"ｵ",
+          u"ｶ", u"ｷ", u"ｸ", u"ｹ", u"ｺ",
+          u"ｻ", u"ｼ", u"ｽ", u"ｾ", u"ｿ",
+          u"ﾀ", u"ﾁ", u"ﾂ", u"ﾃ", u"ﾄ",
+          u"ﾅ", u"ﾆ", u"ﾇ", u"ﾈ", u"ﾉ",
+          u"ﾊ", u"ﾋ", u"ﾌ", u"ﾍ", u"ﾎ",
+          u"ﾏ", u"ﾐ", u"ﾑ", u"ﾒ", u"ﾓ",
+          u"ﾔ", u"ﾕ", u"ﾖ",
+          u"ﾗ", u"ﾘ", u"ﾙ", u"ﾚ", u"ﾛ",
+          u"ﾜ", u"ｦ", u"ﾝ",
+          u"ｧ", u"ｨ", u"ｩ", u"ｪ", u"ｫ",
+          u"ｯ", u"ｬ", u"ｭ", u"ｮ", u"ｳﾞ",
+          u"ｶﾞ", u"ｷﾞ", u"ｸﾞ", u"ｹﾞ", u"ｺﾞ",
+          u"ｻﾞ", u"ｼﾞ", u"ｽﾞ", u"ｾﾞ", u"ｿﾞ",
+          u"ﾀﾞ", u"ﾁﾞ", u"ﾂﾞ", u"ﾃﾞ", u"ﾄﾞ",
+          u"ﾊﾞ", u"ﾋﾞ", u"ﾌﾞ", u"ﾍﾞ", u"ﾎﾞ",
+          u"ﾊﾟ", u"ﾋﾟ", u"ﾌﾟ", u"ﾍﾟ", u"ﾎﾟ",
+          u"。", u"、", u"･", u"ﾞ", u"ﾟ", u"｢", u"｣", u"ｰ", u"!", u"?"]
 
 # maps of ascii
 zh_ascii = {}
+zhe_ascii = {}
 hz_ascii = {}
 
 for (z, h) in zip(z_ascii, h_ascii):
     zh_ascii[z] = h
     hz_ascii[h] = z
 
-del z_ascii, h_ascii
+for (z, he) in zip(z_ascii, he_ascii):
+    zhe_ascii[z] = he
+
+del z_ascii, h_ascii, he_ascii
 
 # maps of digit
 zh_digit = {}
@@ -130,6 +136,13 @@ def _check_mode_zh(m):
     else:
         raise zenhanError, "Sorry... You set invalid mode."
 
+def _check_mode_zhe(m):
+    t_m = {}
+    if isinstance(m, int) and m >= 0 and m <= 7:
+        return _zhe_trans_map(m)
+    else:
+        raise zenhanError, "Sorry... You set invalid mode."
+
 def _check_mode_hz(m):
     t_m = {}
     if isinstance(m, int) and m >= 0 and m <= 7:
@@ -148,6 +161,18 @@ def _zh_trans_map(m):
         m -= 2
     if m:
         tm.update(zh_ascii)
+    return tm
+
+def _zhe_trans_map(m):
+    tm = {}
+    if m >=4:
+        tm.update(zh_kana)
+        m -= 4
+    if m >= 2:
+        tm.update(zh_digit)
+        m -= 2
+    if m:
+        tm.update(zhe_ascii)
     return tm
 
 def _hz_trans_map(m):
@@ -179,6 +204,20 @@ def z2h(text="", mode=ALL, ignore=()):
 
     return ''.join(converted)
 
+def z2he(text="", mode=ALL, ignore=()):
+    converted = []
+
+    text = _check_text(text)
+    zhe_map = _check_mode_zhe(mode)
+
+    for c in text:
+        if c in ignore:
+            converted.append(c)
+        else:
+            converted.append(zhe_map.get(c, c))
+
+    return ''.join(converted)
+
 # function convert from HANKAKU to ZENKAKU
 # argument and return: unicode string
 def h2z(text, mode=ALL, ignore=()):
@@ -191,7 +230,7 @@ def h2z(text, mode=ALL, ignore=()):
     for c in text:
         if c in ignore:
             converted.append(c)
-        elif c in (u"ŽÞ", u"Žß"):
+        elif c in (u"ﾞ", u"ﾟ"):
             p = converted.pop()
             converted.extend(hz_map.get(prev+c, [p, hz_map.get(c, c)]))
         else:
@@ -202,11 +241,11 @@ def h2z(text, mode=ALL, ignore=()):
     return ''.join(converted)
 
 if __name__ == "__main__":
-    teststr = unicode("Žßabc£Ä£ÅŽÞ£Æ123£´£µ£¶Ž±Ž¶ŽÞŽ»¥À¥Ê¥Ð¥ÓŽÌŽßŽÍŽßŽß", "euc-jp")
+    teststr = unicode("ﾟabcＤＥﾞＦ123４５６ｱｶﾞｻダナバビﾌﾟﾍﾟﾟ", "utf-8")
 
-    print "original:", teststr.encode("euc-jp")
-    print "h2z ascii only:", h2z(teststr, ASCII).encode("euc-jp")
-    print "h2z ascii and kana:", h2z(teststr, ASCII|KANA).encode("euc-jp")
-    print "z2h digit only:", z2h(teststr, DIGIT).encode("euc-jp")
-    print "z2h digit and kana:", z2h(teststr, DIGIT|KANA).encode("euc-jp")
-    print "z2h digit and kana, but '£µ':", z2h(teststr, DIGIT|KANA, (u"£µ")).encode("euc-jp")
+    print "original:", teststr.encode("utf-8")
+    print "h2z ascii only:", h2z(teststr, ASCII).encode("utf-8")
+    print "h2z ascii and kana:", h2z(teststr, ASCII|KANA).encode("utf-8")
+    print "z2h digit only:", z2h(teststr, DIGIT).encode("utf-8")
+    print "z2h digit and kana:", z2h(teststr, DIGIT|KANA).encode("utf-8")
+    print "z2h digit and kana, but '５':", z2h(teststr, DIGIT|KANA, (u"５")).encode("euc-jp")
